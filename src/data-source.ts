@@ -13,6 +13,15 @@ const dataSourceConfig = (): DataSourceOptions => {
     throw new Error("Missing env var: 'DATABASE_URL'")
   }
 
+  if(process.env.NODE_ENV === 'test'){
+    return {
+        type: 'sqlite',
+        database: ':memory:',
+        synchronize: true,
+        entities: [entitiesPath]
+    }
+}
+
   return {
     type: 'postgres',
     url: dbUrl,
