@@ -2,34 +2,29 @@ import { Repository } from "typeorm";
 import { Movie } from "../entities";
 import { AppDataSource } from "../data-source";
 import { AppError } from "../errors";
+import { MovieCreate, MovieRead, MovieRepo, MovieUpdate } from "../interfaces";
 
-const createMovieService = async (payLoad: any): Promise<Movie> => {
-  const repo: Repository<Movie> = AppDataSource.getRepository(Movie)
+const createMovieService = async (payLoad: MovieCreate): Promise<Movie> => {
+  const repo: MovieRepo = AppDataSource.getRepository(Movie)
   const movie: Movie = await repo.save(payLoad)
 
   return movie
 }
 
-const readMovieService = async (): Promise<Array<Movie>> => {
-  const repo: Repository<Movie> = AppDataSource.getRepository(Movie)
-  const movies: Array<Movie> = await repo.find()
+const readMovieService = async (): Promise<MovieRead> => {
+  const repo: MovieRepo = AppDataSource.getRepository(Movie)
+  const movies: MovieRead = await repo.find()
 
   return movies
 }
 
-const updateMovieService = async (movieId: number, payLoad: any): Promise<Movie> => {
-  const repo: Repository<Movie> = AppDataSource.getRepository(Movie)
-  const movie: Movie | null = await repo.findOneBy({ id: movieId })
-  if (!movie) throw new AppError("Movie not found", 404)
-
+const updateMovieService = async (movie: Movie, payLoad: MovieUpdate): Promise<Movie> => {
+  const repo: MovieRepo = AppDataSource.getRepository(Movie)
   return await repo.save({ ...movie, ...payLoad })
 }
 
-const deleteMovieService = async (movieId: number): Promise<void> => {
-  const repo: Repository<Movie> = AppDataSource.getRepository(Movie)
-  const movie: Movie | null = await repo.findOneBy({ id: movieId })
-  if (!movie) throw new AppError("Movie not found", 404)
-
+const deleteMovieService = async (movie: Movie): Promise<void> => {
+  const repo: MovieRepo = AppDataSource.getRepository(Movie)
   await repo.remove(movie)
 }
 
